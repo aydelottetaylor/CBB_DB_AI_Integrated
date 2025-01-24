@@ -1,5 +1,5 @@
 CREATE TABLE commissioner (
-    commissioner_id INTEGER PRIMARY KEY,
+    commissioner_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     age INTEGER,
@@ -8,7 +8,7 @@ CREATE TABLE commissioner (
 );
 
 CREATE TABLE conference (
-    conference_id INTEGER PRIMARY KEY,
+    conference_id INTEGER PRIMARY KEY AUTOINCREMENT,
     conference_name VARCHAR(30) NOT NULL,
     year_founded INTEGER NOT NULL,
     subdivision VARCHAR(10) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE conference (
 );
 
 CREATE TABLE team (
-    team_id INTEGER PRIMARY KEY,
+    team_id INTEGER PRIMARY KEY AUTOINCREMENT,
     conference_id INTEGER NOT NULL,
     team_name VARCHAR(30) NOT NULL,
     games INTEGER NOT NULL,
@@ -32,11 +32,12 @@ CREATE TABLE team (
     steals INTEGER NOT NULL,
     blocks INTEGER NOT NULL,
     turnovers INTEGER NOT NULL,
+    personal_fouls INTEGER NOT NULL,
     FOREIGN KEY (conference_id) REFERENCES conference (conference_id)
 );
 
 CREATE TABLE player (
-    player_id INTEGER PRIMARY KEY,
+    player_id INTEGER PRIMARY KEY AUTOINCREMENT,
     team_id INTEGER NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
