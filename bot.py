@@ -47,6 +47,7 @@ def fetch_database():
             print('  ', row)
         print()
         
-    
-        
-fetch_database()
+# fetch_database()
+
+
+
