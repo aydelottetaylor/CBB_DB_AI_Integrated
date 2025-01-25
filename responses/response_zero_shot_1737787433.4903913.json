@@ -1,0 +1,27 @@
+{
+  "strategy": "zero_shot",
+  "prompt_prefix": "CREATE TABLE commissioner (\n    commissioner_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    first_name VARCHAR(20) NOT NULL,\n    last_name VARCHAR(20) NOT NULL,\n    age INTEGER,\n    phone_number BIGINT,\n    email VARCHAR(35)\n);\n\nCREATE TABLE conference (\n    conference_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    conference_name VARCHAR(30) NOT NULL,\n    year_founded INTEGER NOT NULL,\n    subdivision VARCHAR(10) NOT NULL,\n    commissioner_id INTEGER NOT NULL,\n    FOREIGN KEY (commissioner_id) REFERENCES commissioner (commissioner_id)\n);\n\nCREATE TABLE team (\n    team_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    conference_id INTEGER NOT NULL,\n    team_name VARCHAR(30) NOT NULL,\n    games INTEGER NOT NULL,\n    wins INTEGER NOT NULL,\n    losses INTEGER NOT NULL,\n    win_percentage DECIMAL(4, 3),\n    strength_of_schedule DECIMAL(5, 2),\n    simple_rating_system DECIMAL(5, 2),\n    team_points INTEGER NOT NULL,\n    team_rebounds INTEGER NOT NULL,\n    assists INTEGER NOT NULL,\n    steals INTEGER NOT NULL,\n    blocks INTEGER NOT NULL,\n    turnovers INTEGER NOT NULL,\n    personal_fouls INTEGER NOT NULL,\n    FOREIGN KEY (conference_id) REFERENCES conference (conference_id)\n);\n\nCREATE TABLE player (\n    player_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    team_id INTEGER NOT NULL,\n    first_name VARCHAR(20) NOT NULL,\n    last_name VARCHAR(20) NOT NULL,\n    position VARCHAR(15) NOT NULL,\n    games_played INTEGER NOT NULL,\n    total_points INTEGER NOT NULL,\n    total_rebounds INTEGER NOT NULL,\n    total_assists INTEGER NOT NULL,\n    field_goal_percentage DECIMAL(4, 1) NOT NULL,\n    three_point_percentage DECIMAL(4, 1) NOT NULL,\n    free_throw_percentage DECIMAL(4, 1) NOT NULL,\n    effective_field_goal_percentage DECIMAL(4, 1) NOT NULL,\n    FOREIGN KEY (team_id) REFERENCES team (team_id)\n);\n\nGive me a sqlite select statement that answers the following question. Only respond with the sqlite select statement. If there is an error do not explain or talk about it.",
+  "results": [
+    {
+      "Question": "Which team has the most points?",
+      "GPT Generated SQL": "SELECT team_name FROM team ORDER BY team_points DESC LIMIT 1;\n",
+      "Response from Generated SQL": "[('Virginia Tech',)]",
+      "Reponse Interpreted by GPT": "Virginia Tech has the most points.",
+      "Error": null
+    },
+    {
+      "Question": "Which team averages the most points per game?",
+      "GPT Generated SQL": "SELECT team_name\nFROM team\nORDER BY (team_points * 1.0 / games) DESC\nLIMIT 1;\n",
+      "Response from Generated SQL": "[('Marquette',)]",
+      "Reponse Interpreted by GPT": "Marquette is the team that averages the most points per game.",
+      "Error": null
+    },
+    {
+      "Question": "Which team has the best assist to turnover ratio and what is their assist to turnover ratio?",
+      "GPT Generated SQL": "SELECT team_name, (assists * 1.0 / turnovers) AS assist_to_turnover_ratio\nFROM team\nORDER BY assist_to_turnover_ratio DESC\nLIMIT 1;\n",
+      "Response from Generated SQL": "[('Indiana', 1.874251497005988)]",
+      "Reponse Interpreted by GPT": "The Indiana team has the best assist to turnover ratio with a ratio of 1.87.",
+      "Error": null
+    }
+  ]
+}
