@@ -27,6 +27,7 @@ CREATE TABLE team (
     strength_of_schedule DECIMAL(5, 2),
     simple_rating_system DECIMAL(5, 2),
     team_points INTEGER NOT NULL,
+    opponent_points INTEGER NOT NULL,
     team_rebounds INTEGER NOT NULL,
     assists INTEGER NOT NULL,
     steals INTEGER NOT NULL,
