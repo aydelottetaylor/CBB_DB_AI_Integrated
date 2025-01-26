@@ -1,0 +1,57 @@
+{
+  "Timestamp": "2025-01-25 17:03:35",
+  "Question": "Which five teams average the most points per game?",
+  "GPT Generated SQL": "SELECT team_name, (team_points / CAST(games AS FLOAT)) AS average_points_per_game\nFROM team\nORDER BY average_points_per_game DESC\nLIMIT 5;\n",
+  "Response from Generated SQL": "[('Alabama', 90.89473684210526), ('Kentucky', 89.16666666666667), ('Gonzaga', 88.4), ('Iowa', 86.75), ('South Dakota', 86.61904761904762)]",
+  "Reponse Interpreted by GPT": "The five teams that average the most points per game are Alabama with 90.89, Kentucky with 89.17, Gonzaga with 88.4, Iowa with 86.75, and South Dakota with 86.62.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:04:23",
+  "Question": "Which player averages the most points per game?",
+  "GPT Generated SQL": "SELECT first_name, last_name, (total_points * 1.0 / games_played) AS points_per_game\nFROM player\nORDER BY points_per_game DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[('Elijah', 'Foster', 19.545454545454547)]",
+  "Reponse Interpreted by GPT": "Elijah Foster averages the most points per game, with an average of 19.55 points per game.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:04:44",
+  "Question": "Which point averages the most rebounds per game?",
+  "GPT Generated SQL": "SELECT first_name, last_name, (total_rebounds / CAST(games_played AS FLOAT)) AS rebounds_per_game\nFROM player\nWHERE position = 'Point Guard'\nORDER BY rebounds_per_game DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[]",
+  "Reponse Interpreted by GPT": "There are no players in the database who have played games to calculate the average rebounds per game.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:05:07",
+  "Question": "Which player averages the most rebounds per game?",
+  "GPT Generated SQL": "SELECT first_name, last_name, (total_rebounds / CAST(games_played AS FLOAT)) AS rebounds_per_game\nFROM player\nORDER BY rebounds_per_game DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[('Hudson', 'Howard', 9.166666666666666)]",
+  "Reponse Interpreted by GPT": "Hudson Howard averages the most rebounds per game with an average of 9.17 rebounds.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:08:14",
+  "Question": "What team has the best record?",
+  "GPT Generated SQL": "SELECT team_name FROM team ORDER BY win_percentage DESC LIMIT 1;\n",
+  "Response from Generated SQL": "[('Auburn',)]",
+  "Reponse Interpreted by GPT": "The team with the best record is Auburn.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:11:58",
+  "Question": "What player averages the most steals per game?",
+  "GPT Generated SQL": "SELECT p.first_name, p.last_name, (t.steals / CAST(t.games AS FLOAT)) AS steals_per_game\nFROM player p\nJOIN team t ON p.team_id = t.team_id\nORDER BY steals_per_game DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[('Simas', 'Lukosius', 8.722222222222221)]",
+  "Reponse Interpreted by GPT": "The player Simas Lukosius averages the most steals per game with an average of 8.722.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:15:49",
+  "Question": "Which Big12 team has the best average margin of victory?",
+  "GPT Generated SQL": "SELECT team_name, (AVG(team_points) - AVG(opponent_points)) AS avg_margin_victory\nFROM team\nJOIN conference ON team.conference_id = conference.conference_id\nWHERE conference.conference_name = 'Big12'\nGROUP BY team.team_id\nORDER BY avg_margin_victory DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[]",
+  "Reponse Interpreted by GPT": "No Big12 team data is available in the database to calculate the best average margin of victory.",
+  "Error": null
+}{
+  "Timestamp": "2025-01-25 17:17:20",
+  "Question": "Which Big 12 team has the best average margin of victory?",
+  "GPT Generated SQL": "SELECT t.team_name, \n       AVG((t.team_points - t.opponent_points) / t.games) AS average_margin_of_victory\nFROM team t\nJOIN conference c ON t.conference_id = c.conference_id\nWHERE c.conference_name = 'Big 12'\nGROUP BY t.team_id\nORDER BY average_margin_of_victory DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[('Houston', 21.0)]",
+  "Reponse Interpreted by GPT": "The Big 12 team with the best average margin of victory is Houston, with an average margin of 21.0 points.",
+  "Error": null
+}

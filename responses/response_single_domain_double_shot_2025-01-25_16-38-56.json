@@ -1,0 +1,83 @@
+{
+  "strategy": "single_domain_double_shot",
+  "prompt_prefix": "CREATE TABLE commissioner (\n    commissioner_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    first_name VARCHAR(20) NOT NULL,\n    last_name VARCHAR(20) NOT NULL,\n    age INTEGER,\n    phone_number BIGINT,\n    email VARCHAR(35)\n);\n\nCREATE TABLE conference (\n    conference_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    conference_name VARCHAR(30) NOT NULL,\n    year_founded INTEGER NOT NULL,\n    subdivision VARCHAR(10) NOT NULL,\n    commissioner_id INTEGER NOT NULL,\n    FOREIGN KEY (commissioner_id) REFERENCES commissioner (commissioner_id)\n);\n\nCREATE TABLE team (\n    team_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    conference_id INTEGER NOT NULL,\n    team_name VARCHAR(30) NOT NULL,\n    games INTEGER NOT NULL,\n    wins INTEGER NOT NULL,\n    losses INTEGER NOT NULL,\n    win_percentage DECIMAL(4, 3),\n    strength_of_schedule DECIMAL(5, 2),\n    simple_rating_system DECIMAL(5, 2),\n    team_points INTEGER NOT NULL,\n    opponent_points INTEGER NOT NULL,\n    team_rebounds INTEGER NOT NULL,\n    assists INTEGER NOT NULL,\n    steals INTEGER NOT NULL,\n    blocks INTEGER NOT NULL,\n    turnovers INTEGER NOT NULL,\n    personal_fouls INTEGER NOT NULL,\n    FOREIGN KEY (conference_id) REFERENCES conference (conference_id)\n);\n\nCREATE TABLE player (\n    player_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    team_id INTEGER NOT NULL,\n    first_name VARCHAR(20) NOT NULL,\n    last_name VARCHAR(20) NOT NULL,\n    position VARCHAR(15) NOT NULL,\n    games_played INTEGER NOT NULL,\n    total_points INTEGER NOT NULL,\n    total_rebounds INTEGER NOT NULL,\n    total_assists INTEGER NOT NULL,\n    field_goal_percentage DECIMAL(4, 1) NOT NULL,\n    three_point_percentage DECIMAL(4, 1) NOT NULL,\n    free_throw_percentage DECIMAL(4, 1) NOT NULL,\n    effective_field_goal_percentage DECIMAL(4, 1) NOT NULL,\n    FOREIGN KEY (team_id) REFERENCES team (team_id)\n);\n\nList the conferences in order for highest to lowest average strength of schedule and give their average strength of schedule.SELECT conference.conference_name, AVG(team.strength_of_schedule) AS average_strength_of_schedule\nFROM conference\nJOIN team ON conference.conference_id = team.conference_id\nGROUP BY conference.conference_id\nORDER BY average_strength_of_schedule DESC;\nGive me a sqlite select statement that answers the following question. Only respond with the sqlite select statement. If there is an error do not explain or talk about it. Here is the question: ",
+  "results": [
+    {
+      "Question": "Which team has the most points?",
+      "GPT Generated SQL": "SELECT team_name, MAX(team_points) AS most_points FROM team;\n",
+      "Response from Generated SQL": "[('South Dakota', 1819)]",
+      "Reponse Interpreted by GPT": "The team with the most points is South Dakota with a total of 1819 points.",
+      "Error": null
+    },
+    {
+      "Question": "Which team averages the most points per game?",
+      "GPT Generated SQL": "SELECT team_name, (team_points / CAST(games AS FLOAT)) AS average_points_per_game\nFROM team\nORDER BY average_points_per_game DESC\nLIMIT 1;\n",
+      "Response from Generated SQL": "[('Alabama', 90.89473684210526)]",
+      "Reponse Interpreted by GPT": "The Alabama team averages the most points per game with 90.89.",
+      "Error": null
+    },
+    {
+      "Question": "Which team has the best assist to turnover ratio and what is their assist to turnover ratio?",
+      "GPT Generated SQL": "SELECT team_name, (assists * 1.0 / NULLIF(turnovers, 0)) AS assist_to_turnover_ratio\nFROM team\nORDER BY assist_to_turnover_ratio DESC\nLIMIT 1;\n",
+      "Response from Generated SQL": "[('Connecticut', 1.9166666666666667)]",
+      "Reponse Interpreted by GPT": "The team \"Connecticut\" has the highest assist to turnover ratio of 1.917.",
+      "Error": null
+    },
+    {
+      "Question": "Which team has the most players with over 200 total points and who are those players?",
+      "GPT Generated SQL": "SELECT team.team_name, player.first_name, player.last_name\nFROM player\nJOIN team ON player.team_id = team.team_id\nWHERE player.total_points > 200\nGROUP BY player.team_id, player.player_id\nHAVING COUNT(player.player_id) = (\n    SELECT MAX(player_count) \n    FROM (\n        SELECT COUNT(player.player_id) AS player_count\n        FROM player\n        WHERE player.total_points > 200\n        GROUP BY player.team_id\n    ) AS team_player_counts\n);\n",
+      "Response from Generated SQL": "[]",
+      "Reponse Interpreted by GPT": "No team has players with over 200 total points according to the available data.",
+      "Error": null
+    },
+    {
+      "Question": "Which team has the least players with over 200 points?",
+      "GPT Generated SQL": "SELECT team.team_name\nFROM team\nJOIN player ON team.team_id = player.team_id\nWHERE player.total_points > 200\nGROUP BY team.team_id\nORDER BY COUNT(player.player_id) ASC\nLIMIT 1;\n",
+      "Response from Generated SQL": "[('Brigham Young',)]",
+      "Reponse Interpreted by GPT": "The team with the least players scoring over 200 points is Brigham Young.",
+      "Error": null
+    },
+    {
+      "Question": "What are the three teams with the most rebounds per game?",
+      "GPT Generated SQL": "SELECT team_name, (team_rebounds / CAST(games AS FLOAT)) AS rebounds_per_game\nFROM team\nORDER BY rebounds_per_game DESC\nLIMIT 3;\n",
+      "Response from Generated SQL": "[('Alabama', 44.78947368421053), ('Illinois', 44.73684210526316), ('Florida', 44.526315789473685)]",
+      "Reponse Interpreted by GPT": "The three teams with the most rebounds per game are Alabama (44.79), Illinois (44.74), and Florida (44.53).",
+      "Error": null
+    },
+    {
+      "Question": "Come up with an algorithm to recommend the top 3 most valuable players for the Big 12 conference based on individual player rating. Give their rating and team they belong to.",
+      "GPT Generated SQL": "SELECT player.first_name || ' ' || player.last_name AS player_name, \n       (player.total_points + player.total_rebounds + player.total_assists) / (player.games_played * 3.0) AS player_rating,\n       team.team_name\nFROM player\nJOIN team ON player.team_id = team.team_id\nJOIN conference ON team.conference_id = conference.conference_id\nWHERE conference.conference_name = 'Big 12'\nORDER BY player_rating DESC\nLIMIT 3;\n",
+      "Response from Generated SQL": "[('Bryce Anderson', 8.61111111111111, 'Baylor'), ('Shaun Patton', 8.11111111111111, 'Baylor'), ('Oliver Ward', 7.777777777777778, 'Arizona')]",
+      "Reponse Interpreted by GPT": "The top 3 most valuable players for the Big 12 conference based on individual player rating are: \n\n| Player         | Rating  | Team    |\n|----------------|---------|---------|\n| Bryce Anderson | 8.61    | Baylor  |\n| Shaun Patton   | 8.11    | Baylor  |\n| Oliver Ward    | 7.78    | Arizona |",
+      "Error": null
+    },
+    {
+      "Question": "Calculate each player's impact score that plays for Brigham Young. The Impact score is defined as: ((Player's Total Points + Total Rebounds + Total Assists) / Teams Total Games played) * Team's Win Percentage.",
+      "GPT Generated SQL": "SELECT player.first_name, player.last_name, \n       ((player.total_points + player.total_rebounds + player.total_assists) / CAST(team.games AS DECIMAL)) * team.win_percentage AS impact_score\nFROM player\nJOIN team ON player.team_id = team.team_id\nWHERE team.team_name = 'Brigham Young';\n",
+      "Response from Generated SQL": "[('Richie', 'Saunders', 12.673), ('Trevin', 'Knell', 8.671000000000001), ('Fousseyni', 'Traore', 12.006), ('Egor', 'Demin', 7.337000000000001), ('Dawson', 'Baker', 8.004000000000001), ('Keba', 'Keita', 10.005), ('Dallin', 'Hall', 4.002000000000001), ('Mawot', 'Mag', 7.337000000000001), ('Mihalo', 'Boskovic', 2.668), ('Elijah', 'Crawford', 1.334), ('Brody', 'Koslowski', 0.667), ('Trey', 'Stewart', 0.667), ('Jared', 'McGregor', 0.0), ('Max', 'Triplett', 0.667), ('Townsend', 'Tripple', 0.667), ('Khadim', 'Mboup', 0.0)]",
+      "Reponse Interpreted by GPT": "The Impact scores for players from Brigham Young are: \n\n| First Name | Last Name  | Impact Score |\n|------------|------------|--------------|\n| Richie     | Saunders   | 12.673       |\n| Trevin     | Knell      | 8.671        |\n| Fousseyni  | Traore     | 12.006       |\n| Egor       | Demin      | 7.337        |\n| Dawson     | Baker      | 8.004        |\n| Keba       | Keita      | 10.005       |\n| Dallin     | Hall       | 4.002        |\n| Mawot      | Mag        | 7.337        |\n| Mihalo     | Boskovic   | 2.668        |\n| Elijah     | Crawford   | 1.334        |\n| Brody      | Koslowski  | 0.667        |\n| Trey       | Stewart    | 0.667        |\n| Jared      | McGregor   | 0.0          |\n| Max        | Triplett   | 0.667        |\n| Townsend   | Tripple    | 0.667        |\n| Khadim     | Mboup      | 0.0          |",
+      "Error": null
+    },
+    {
+      "Question": "Calculate the top 10 impact scores in the Big 12 conference. The Impact score is defined as: ((Player's Total Points + Total Rebounds + Total Assists) / Teams Total Games played) * Team's Win Percentage.",
+      "GPT Generated SQL": "SELECT player.first_name, player.last_name, \n       ((player.total_points + player.total_rebounds + player.total_assists) / team.games) * team.win_percentage AS impact_score\nFROM player\nJOIN team ON player.team_id = team.team_id\nJOIN conference ON team.conference_id = conference.conference_id\nWHERE conference.conference_name = 'Big 12'\nORDER BY impact_score DESC\nLIMIT 10;\n",
+      "Response from Generated SQL": "[('Oliver', 'Ward', 15.341000000000001), ('Logan', 'Scott', 14.052999999999999), ('Liam', 'James', 13.34), ('Shaun', 'Patton', 13.34), ('Richie', 'Saunders', 12.673), ('Elijah', 'Green', 12.673), ('Jacob', 'Murphy', 12.219999999999999), ('Lucas', 'Bailey', 12.219999999999999), ('Fousseyni', 'Traore', 12.006), ('Bryce', 'Anderson', 11.339)]",
+      "Reponse Interpreted by GPT": "The top 10 impact scores in the Big 12 conference are as follows: \n\n| First Name | Last Name | Impact Score |\n|------------|-----------|--------------|\n| Oliver     | Ward      | 15.341       |\n| Logan      | Scott     | 14.053       |\n| Liam       | James     | 13.34        |\n| Shaun      | Patton    | 13.34        |\n| Richie     | Saunders  | 12.673       |\n| Elijah     | Green     | 12.673       |\n| Jacob      | Murphy    | 12.22        |\n| Lucas      | Bailey    | 12.22        |\n| Fousseyni  | Traore    | 12.006       |\n| Bryce      | Anderson  | 11.339       |",
+      "Error": null
+    },
+    {
+      "Question": "What are the teams with the top five average margins of vistory?",
+      "GPT Generated SQL": "SELECT team_name, (AVG(team_points - opponent_points)) AS average_margin_of_victory\nFROM team\nGROUP BY team_id\nORDER BY average_margin_of_victory DESC\nLIMIT 5;\n",
+      "Response from Generated SQL": "[('Houston', 394.0), ('Duke', 392.0), ('Maryland', 376.0), ('Florida', 367.0), ('Auburn', 353.0)]",
+      "Reponse Interpreted by GPT": "The teams with the top five average margins of victory are Houston (394.0), Duke (392.0), Maryland (376.0), Florida (367.0), and Auburn (353.0).",
+      "Error": null
+    },
+    {
+      "Question": "What are the teams with the top five average margins of victory adjusted for normalized strength of schedule?",
+      "GPT Generated SQL": "SELECT team_name, \n       ((team_points - opponent_points) / games + strength_of_schedule) AS adjusted_average_margin_of_victory\nFROM team\nORDER BY adjusted_average_margin_of_victory DESC\nLIMIT 5;\n",
+      "Response from Generated SQL": "[('Auburn', 30.57), ('Duke', 29.5), ('Houston', 29), ('Alabama', 25.16), ('Florida', 24.740000000000002)]",
+      "Reponse Interpreted by GPT": "The top five teams with the highest average margins of victory adjusted for normalized strength of schedule are Auburn (30.57), Duke (29.5), Houston (29), Alabama (25.16), and Florida (24.74).",
+      "Error": null
+    }
+  ]
+}
