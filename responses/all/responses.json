@@ -54,4 +54,11 @@
   "Response from Generated SQL": "[('Houston', 21.0)]",
   "Reponse Interpreted by GPT": "The Big 12 team with the best average margin of victory is Houston, with an average margin of 21.0 points.",
   "Error": null
+}{
+  "Timestamp": "2025-01-29 22:04:00",
+  "Question": "Is there any team data in the database right now",
+  "GPT Generated SQL": "SELECT COUNT(*) FROM team_stats;\n",
+  "Response from Generated SQL": "[(0,)]",
+  "Reponse Interpreted by GPT": "There is team data in the database.",
+  "Error": null
 }

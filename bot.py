@@ -58,12 +58,12 @@ def close_connections(sqlite_cursor, sqlite_connection):
 def run_query(query, sqlite_cursor):
     return sqlite_cursor.execute(query).fetchall()
 
-def fetch_database():
-    tables = ['Commissioner', 'Conference', 'Team', 'Player']
+def fetch_database(sqlite_cursor):
+    tables = ['Commissioner', 'Conference', 'Team_stats', 'Player']
     
     for table in tables:
         print(f"{table} Data:")
-        data = run_query(f'SELECT * FROM {table}')
+        data = run_query(f'SELECT * FROM {table}', sqlite_cursor)
         for row in data:
             print('  ', row)
         print()
@@ -122,14 +122,40 @@ def insert_team_data(cursor, stats_path, ratings_path):
                 else:
                     conference_id = 6
                 team_name = school
+                if ratings_row["AP Rank"] != '':
+                    ap_rank = int(ratings_row["AP Rank"])
+                else:
+                    ap_rank = None
                 games = int(row["G"])
                 wins = int(row["W"])
                 losses = int(row["L"])
                 win_percentage = float(row["W-L%"])
+                offensive_simple_rating_system = float(ratings_row["OSRS"])
+                defensive_simple_rating_system = float(ratings_row["DSRS"])
                 simple_rating_system = float(ratings_row["SRS"])
                 strength_of_schedule = float(ratings_row["SOS"])
+                offensive_rating = float(ratings_row["ORtg"])
+                defensive_rating = float(ratings_row["DRtg"])
+                net_rating = float(ratings_row["NRtg"])
+                conference_wins = int(row["CW"])
+                conference_losses = int(row["CL"])
+                home_wins = int(row["HW"])
+                home_losses = int(row["HL"])
+                away_wins = int(row["AW"])
+                away_losses = int(row["AL"])
                 team_points = int(row["Tm."])
                 opponent_points = int(row["Opp."])
+                minutes_played = int(row['MP'])
+                field_goals_made = int(row['FG'])
+                field_goals_attempted = int(row['FGA'])
+                field_goal_percentage = float(row['FG%'])
+                three_pointers_made = int(row['3P'])
+                three_pointers_attempted = int(row['3PA'])
+                three_point_percentage = float(row['3P%'])
+                free_throws_made = int(row['FT'])
+                free_throws_attempted = int(row['FTA'])
+                free_throw_percentage = float(row['FT%'])
+                offensive_rebounds = int(row['ORB'])
                 team_rebounds = int(row["TRB"])
                 assists = int(row["AST"])
                 steals = int(row["STL"])
@@ -139,15 +165,23 @@ def insert_team_data(cursor, stats_path, ratings_path):
         
                 cursor.execute(
                     """
-                    INSERT INTO team (
-                        conference_id, team_name, games, wins, losses, win_percentage, 
-                        simple_rating_system, strength_of_schedule, team_points, opponent_points,  
+                    INSERT INTO team_stats (
+                        conference_id, team_name, ap_rank, games, wins, losses, win_percentage, offensive_simple_rating_system, defensive_simple_rating_system, 
+                        simple_rating_system, strength_of_schedule, offensive_rating, defensive_rating, net_rating, 
+                        conference_wins, conference_losses, home_wins, home_losses, away_wins, away_losses, 
+                        team_points, opponent_points, minutes_played, field_goals_made, field_goals_attempted, 
+                        field_goal_percentage, three_pointers_made, three_pointers_attempted, three_point_percentage, 
+                        free_throws_made, free_throws_attempted, free_throw_percentage, offensive_rebounds,
                         team_rebounds, assists, steals, blocks, turnovers, personal_fouls
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
-                        conference_id, team_name, games, wins, losses, win_percentage,
-                        simple_rating_system, strength_of_schedule, team_points, opponent_points,
+                        conference_id, team_name, ap_rank, games, wins, losses, win_percentage, offensive_simple_rating_system, defensive_simple_rating_system, 
+                        simple_rating_system, strength_of_schedule, offensive_rating, defensive_rating, net_rating, 
+                        conference_wins, conference_losses, home_wins, home_losses, away_wins, away_losses, 
+                        team_points, opponent_points, minutes_played, field_goals_made, field_goals_attempted, 
+                        field_goal_percentage, three_pointers_made, three_pointers_attempted, three_point_percentage, 
+                        free_throws_made, free_throws_attempted, free_throw_percentage, offensive_rebounds,
                         team_rebounds, assists, steals, blocks, turnovers, personal_fouls
                     )
                 )
@@ -175,7 +209,7 @@ def main():
         
     sqlite_cursor, sqlite_connection, open_ai_client, school_stats_path, school_ratings_path, setup_tables_script = setup()
     insert_team_data(sqlite_cursor, school_stats_path, school_ratings_path)
-    # print(fetch_database())
+    print(fetch_database(sqlite_cursor))
     
     sql_only_request_content = 'Give me a sqlite select statement that answers the following question. Only respond with the sqlite select statement. If there is an error do not explain or talk about it. Here is the question: '
         
