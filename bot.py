@@ -109,18 +109,9 @@ def insert_team_data(cursor, stats_path, ratings_path):
             school = row['School']
             if school in ratings_data:
                 ratings_row = ratings_data[school]
-                if ratings_row['Conf'] == 'Big 12':
-                    conference_id = 1
-                elif ratings_row['Conf'] == 'ACC':
-                    conference_id = 2
-                elif ratings_row['Conf'] == 'Big Ten':
-                    conference_id = 3
-                elif ratings_row['Conf'] == 'SEC':
-                    conference_id = 4
-                elif ratings_row['Conf'] == 'Big East':
-                    conference_id = 5
-                else:
-                    conference_id = 6
+                sql = "SELECT conference_id FROM conference WHERE conference_name = '" +  ratings_row['Conf'] + "'"
+                conference_id = run_query(sql, cursor)[0]
+                conference_id = conference_id[0]
                 team_name = school
                 if ratings_row["AP Rank"] != '':
                     ap_rank = int(ratings_row["AP Rank"])
@@ -209,7 +200,7 @@ def main():
         
     sqlite_cursor, sqlite_connection, open_ai_client, school_stats_path, school_ratings_path, setup_tables_script = setup()
     insert_team_data(sqlite_cursor, school_stats_path, school_ratings_path)
-    print(fetch_database(sqlite_cursor))
+    # print(fetch_database(sqlite_cursor))
     
     sql_only_request_content = 'Give me a sqlite select statement that answers the following question. Only respond with the sqlite select statement. If there is an error do not explain or talk about it. Here is the question: '
         

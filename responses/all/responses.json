@@ -61,4 +61,32 @@
   "Response from Generated SQL": "[(0,)]",
   "Reponse Interpreted by GPT": "There is team data in the database.",
   "Error": null
+}{
+  "Timestamp": "2025-02-09 12:55:46",
+  "Question": "Who is the leading scorer in College Basketball?",
+  "GPT Generated SQL": "SELECT first_name, last_name, total_points \nFROM player \nORDER BY total_points DESC \nLIMIT 1;\n",
+  "Response from Generated SQL": "[('Nathaniel', 'Martin', 280)]",
+  "Reponse Interpreted by GPT": "The leading scorer in College Basketball is Nathaniel Martin with 280 points.",
+  "Error": null
+}{
+  "Timestamp": "2025-02-09 12:56:04",
+  "Question": "Who averages the most points per game in college basketball?",
+  "GPT Generated SQL": "SELECT first_name, last_name, total_points / CAST(games_played AS FLOAT) AS points_per_game\nFROM player\nORDER BY points_per_game DESC\nLIMIT 1;\n",
+  "Response from Generated SQL": "[('Elijah', 'Foster', 19.545454545454547)]",
+  "Reponse Interpreted by GPT": "Elijah Foster averages the most points per game in college basketball with 19.55 points per game.",
+  "Error": null
+}{
+  "Timestamp": "2025-02-09 13:13:21",
+  "Question": "Which conference is Ball State in?",
+  "GPT Generated SQL": "SELECT conference_name \nFROM conference \nJOIN team_stats ON conference.conference_id = team_stats.conference_id \nWHERE team_name = 'Ball State';\n",
+  "Response from Generated SQL": "[('MAC',)]",
+  "Reponse Interpreted by GPT": "Ball State is in the Mid-American Conference (MAC).",
+  "Error": null
+}{
+  "Timestamp": "2025-02-09 13:14:07",
+  "Question": "Which conference is IU Indy in?",
+  "GPT Generated SQL": "SELECT c.conference_name\nFROM conference c\nJOIN team_stats t ON c.conference_id = t.conference_id\nWHERE t.team_name = 'IU Indy';\n",
+  "Response from Generated SQL": "[('Horizon',)]",
+  "Reponse Interpreted by GPT": "IU Indy is in the Horizon conference.",
+  "Error": null
 }

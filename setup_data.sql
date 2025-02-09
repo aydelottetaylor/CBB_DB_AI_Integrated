@@ -9,10 +9,36 @@ INSERT INTO commissioner (first_name, last_name, age, phone_number, email) VALUE
 INSERT INTO conference (conference_name, year_founded, subdivision, commissioner_id) VALUES
     ('Big 12', 1994, 'FBS', 1),
     ('ACC', 1984, 'FBS', 2),
-    ('Big 10', 1896, 'FBS', 3),
+    ('Big Ten', 1896, 'FBS', 3),
     ('SEC', 1933, 'FBS', 4),
     ('Big East', 1979, 'FBS', 5),
-    ('Unknown', 2025, 'FBS', 6);
+    ('A-10', 1979, 'FBS', 6),
+    ('A-Sun', 1979, 'FBS', 6),
+    ('AAC', 1979, 'FBS', 6),
+    ('AEC', 1979, 'FBS', 6),
+    ('Big Sky', 1979, 'FBS', 6),
+    ('Big South', 1979, 'FBS', 6),
+    ('Big West', 1979, 'FBS', 6),
+    ('CAA', 1979, 'FBS', 6),
+    ('CUSA', 1979, 'FBS', 6),
+    ('Horizon', 1979, 'FBS', 6),
+    ('Ivy', 1979, 'FBS', 6),
+    ('MAAC', 1979, 'FBS', 6),
+    ('MAC', 1979, 'FBS', 6),
+    ('MEAC', 1979, 'FBS', 6),
+    ('MVC', 1979, 'FBS', 6),
+    ('MWC', 1979, 'FBS', 6),
+    ('NEC', 1979, 'FBS', 6),
+    ('OVC', 1979, 'FBS', 6),
+    ('Patriot', 1979, 'FBS', 6),
+    ('Southern', 1979, 'FBS', 6),
+    ('Southland', 1979, 'FBS', 6),
+    ('Summit', 1979, 'FBS', 6),
+    ('Sun Belt', 1979, 'FBS', 6),
+    ('SWAC', 1979, 'FBS', 6),
+    ('WAC', 1979, 'FBS', 6),
+    ('WCC', 1979, 'FBS', 6);
+    
 
 INSERT INTO player (team_id, first_name, last_name, position, games_played, total_points, total_rebounds, total_assists, field_goal_percentage, three_point_percentage, free_throw_percentage, effective_field_goal_percentage) VALUES
     (30, 'Richie', 'Saunders', 'G', 17, 246, 70, 30, 52.0, 43.0, 71.4, 63.7),
