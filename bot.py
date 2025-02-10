@@ -58,6 +58,18 @@ def close_connections(sqlite_cursor, sqlite_connection):
 def run_query(query, sqlite_cursor):
     return sqlite_cursor.execute(query).fetchall()
 
+def fetch_team_data(sqlite_cursor):
+    return run_query('SELECT * FROM team_stats', sqlite_cursor)
+
+def get_team_data_cols():
+    columns = [
+        "", "Team", "AP Rank", "G", "W", "L", "Win %", "OSRS", "DSRS", "SRS", 
+        "SOS", "O Rtg", "D Rtg", "Net Rtg", "Conf W", "Conf L", "H W", "H L", "A W", "A L", "Tm Pts", 
+        "Opp Pts", "Mins", "FGM", "FGA", "FG%", "3PM", "3PA", "3P%", "FTM", "FTA", "FT%", "O Reb", 
+        "Tm Reb", "Ast", "Stl", "Blk", "TO", "PF"
+    ]
+    return columns
+
 def fetch_database(sqlite_cursor):
     tables = ['Commissioner', 'Conference', 'Team_stats', 'Player']
     
